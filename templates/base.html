@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>聊天网站</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        {% if session.user_id %}
+            <span>欢迎, {{ session.username }}!</span>
+            <a href="{{ url_for('chat') }}">私聊</a>
+            <a href="{{ url_for('group_list') }}">群聊</a>
+            {% if is_admin(session.user_id) %}
+                <a href="{{ url_for('admin_panel') }}">管理后台</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">登出</a>
+        {% endif %}
+    </nav>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+</body>
+</html> 

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="users-list">
+        <h3>用户列表</h3>
+        <button onclick="showCreateGroupDialog()" class="create-group-btn">创建群聊</button>
+        <ul>
+            {% for user in users %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="chat-area">
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {% if message.sender_id == session.user_id %}sent{% else %}received{% endif %}">
+                    <strong>{{ message.sender_name }} 发送给 {{ message.receiver_name }}:</strong>
+                    <p>{{ message.content }}</p>
+                    <small>{{ message.timestamp }}</small>
+                    <button onclick="hideMessage({{ message.id }}, this)" class="hide-message-btn">
+                        隐藏消息
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <form method="post" class="message-form">
+            <select name="receiver_id" required>
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="message" required placeholder="输入消息...">
+            <button type="submit">发送</button>
+        </form>
+    </div>
+</div>
+
+<!-- 添加创建群聊对话框 -->
+<div id="createGroupDialog" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h4>创建群聊</h4>
+        <input type="text" id="groupName" placeholder="群聊名称" required>
+        <button onclick="createGroup()">创建</button>
+        <button onclick="closeDialog()">取消</button>
+    </div>
+</div>
+
+<script>
+function hideMessage(messageId, button) {
+    fetch(`/message/hide/${messageId}`, {method: 'POST'})
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                button.closest('.message').remove();
+            } else {
+                alert(data.message || '操作失败！');
+            }
+        });
+}
+
+function showCreateGroupDialog() {
+    document.getElementById('createGroupDialog').style.display = 'block';
+}
+
+function closeDialog() {
+    document.getElementById('createGroupDialog').style.display = 'none';
+}
+
+function createGroup() {
+    const name = document.getElementById('groupName').value;
+    
+    fetch('/group/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: name })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || '创建群聊失败！');
+        }
+    });
+}
+</script>
+{% endblock %} 

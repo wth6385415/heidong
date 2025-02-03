@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-container">
+    <h2>后台管理</h2>
+    
+    <div class="admin-section">
+        <h3>用户管理</h3>
+        <div class="create-user-form">
+            <h4>创建新用户</h4>
+            <form onsubmit="createUser(event)">
+                <input type="text" id="newUsername" placeholder="用户名" required>
+                <input type="password" id="newPassword" placeholder="密码" required>
+                <button type="submit">创建用户</button>
+            </form>
+        </div>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ "已禁言" if user.is_muted else "正常" }}</td>
+                    <td>
+                        <button onclick="toggleMuteUser({{ user.id }})">
+                            {{ "解除禁言" if user.is_muted else "禁言" }}
+                        </button>
+                        <button onclick="deleteUser({{ user.id }})">删除用户</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="admin-section">
+        <h3>消息管理</h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>发送者</th>
+                    <th>接收者</th>
+                    <th>内容</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for message in messages %}
+                <tr>
+                    <td>{{ message.id }}</td>
+                    <td>{{ message.sender_name }}</td>
+                    <td>{{ message.receiver_name }}</td>
+                    <td>{{ message.content }}</td>
+                    <td>{{ message.timestamp }}</td>
+                    <td>
+                        <button onclick="deleteMessage({{ message.id }})">删除</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="admin-section">
+        <h3>系统管理</h3>
+        <button onclick="resetSystem()" class="danger-button">重置系统</button>
+    </div>
+
+    <div class="admin-section">
+        <h3>群聊管理</h3>
+        <div class="create-group-form">
+            <h4>创建新群聊</h4>
+            <form onsubmit="createGroup(event)">
+                <input type="text" id="newGroupName" placeholder="群聊名称" required>
+                <select id="groupOwner">
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">创建群聊</button>
+            </form>
+        </div>
+        
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>群名称</th>
+                    <th>群主</th>
+                    <th>成员数</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in groups %}
+                <tr>
+                    <td>{{ group.id }}</td>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.owner_name }}</td>
+                    <td>{{ group.member_count }}</td>
+                    <td>{{ group.created_at }}</td>
+                    <td>
+                        <button onclick="showChangeOwnerDialog({{ group.id }})">更改群主</button>
+                        <button onclick="deleteGroup({{ group.id }})">删除群聊</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-section">
+        <h3>用户群聊关系</h3>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>用户名</th>
+                    <th>加入的群聊</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in user_groups %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.group_names or '无' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 添加更改群主的对话框 -->
+    <div id="changeOwnerDialog" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h4>更改群主</h4>
+            <select id="newOwnerSelect">
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="changeGroupOwner()">确认</button>
+            <button onclick="closeDialog()">取消</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleMuteUser(userId) {
+    if (confirm('确定要更改该用户的禁言状态吗？')) {
+        fetch(`/admin/user/mute/${userId}`, {method: 'POST'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) location.reload();
+                else alert(data.message || '操作失败！');
+            });
+    }
+}
+
+function deleteUser(userId) {
+    if (confirm('确定要删除该用户吗？此操作不可恢复！')) {
+        fetch(`/admin/user/delete/${userId}`, {method: 'POST'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) location.reload();
+                else alert(data.message || '删除失败！');
+            });
+    }
+}
+
+function deleteMessage(messageId) {
+    if (confirm('确定要删除该消息吗？此操作不可恢复！')) {
+        fetch(`/admin/message/delete/${messageId}`, {method: 'POST'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) location.reload();
+                else alert(data.message || '删除失败！');
+            });
+    }
+}
+
+function resetSystem() {
+    if (confirm('确定要重置系统吗？此操作将删除所有用户和消息！')) {
+        fetch('/admin/reset', {method: 'POST'})
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) location.reload();
+                else alert(data.message || '重置失败！');
+            });
+    }
+}
+
+function createUser(event) {
+    event.preventDefault();
+    const username = document.getElementById('newUsername').value;
+    const password = document.getElementById('newPassword').value;
+    
+    fetch('/admin/user/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || '创建用户失败！');
+        }
+    });
+}
+
+let currentGroupId = null;
+
+function showChangeOwnerDialog(groupId) {
+    currentGroupId = groupId;
+    document.getElementById('changeOwnerDialog').style.display = 'block';
+}
+
+function closeDialog() {
+    document.getElementById('changeOwnerDialog').style.display = 'none';
+}
+
+function changeGroupOwner() {
+    const newOwnerId = document.getElementById('newOwnerSelect').value;
+    
+    fetch(`/admin/group/${currentGroupId}/owner/${newOwnerId}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || '更改群主失败！');
+        }
+    });
+}
+
+function deleteGroup(groupId) {
+    if (confirm('确定要删除该群聊吗？此操作不可恢复！')) {
+        fetch(`/admin/group/${groupId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || '删除群聊失败！');
+            }
+        });
+    }
+}
+
+function createGroup(event) {
+    event.preventDefault();
+    const name = document.getElementById('newGroupName').value;
+    const ownerId = document.getElementById('groupOwner').value;
+    
+    fetch('/admin/group/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: name,
+            owner_id: ownerId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || '创建群聊失败！');
+        }
+    });
+}
+</script>
+{% endblock %} 

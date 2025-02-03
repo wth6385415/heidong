@@ -1,0 +1,329 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+nav {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ffd700;
+    border-radius: 5px;
+}
+
+.auth-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.chat-container {
+    display: flex;
+    gap: 20px;
+}
+
+.users-list {
+    width: 200px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.chat-area {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.messages {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.sent {
+    background-color: #e3f2fd;
+    margin-left: 20%;
+}
+
+.received {
+    background-color: #f5f5f5;
+    margin-right: 20%;
+}
+
+.message-form {
+    display: flex;
+    gap: 10px;
+}
+
+.message-form input[type="text"] {
+    flex: 1;
+}
+
+.admin-container {
+    padding: 20px;
+}
+
+.admin-section {
+    margin-bottom: 30px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.admin-table th,
+.admin-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.admin-table th {
+    background-color: #f5f5f5;
+}
+
+.danger-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.danger-button:hover {
+    background-color: #cc0000;
+}
+
+.hide-message-btn {
+    font-size: 12px;
+    padding: 2px 5px;
+    margin-left: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.hide-message-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.create-user-form {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.create-user-form h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.create-user-form form {
+    display: flex;
+    gap: 10px;
+}
+
+.create-user-form input {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.create-user-form button {
+    padding: 5px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.create-user-form button:hover {
+    background-color: #218838;
+}
+
+/* 群聊相关样式 */
+.group-container {
+    display: flex;
+    gap: 20px;
+}
+
+.group-list {
+    width: 200px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.group-item {
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+.group-item.active {
+    background-color: #e3f2fd;
+}
+
+.group-chat-area {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.group-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    min-width: 300px;
+}
+
+.modal-content h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.modal-content select {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.modal-content button {
+    margin-right: 10px;
+}
+
+.create-group-btn {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.create-group-btn:hover {
+    background-color: #45a049;
+}
+
+.create-group-form {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.create-group-form h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.create-group-form form {
+    display: flex;
+    gap: 10px;
+}
+
+.create-group-form input,
+.create-group-form select {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.create-group-form button {
+    padding: 5px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.create-group-form button:hover {
+    background-color: #218838;
+}
+
+.group-list-container {
+    padding: 20px;
+}
+
+.group-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.group-item h3 {
+    margin: 0 0 10px 0;
+}
+
+.enter-group-btn {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.enter-group-btn:hover {
+    background-color: #45a049;
+}
+
+.group-invite-btn {
+    padding: 5px 10px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.group-invite-btn:hover {
+    background-color: #1976D2;
+} 
